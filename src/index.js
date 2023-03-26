@@ -30,9 +30,10 @@ const main = async () => {
     try {
         await client.connect();
 
+        //*  Crear Propiedad con validacion:
+        // await crearPropiedadesConValidacion(client);
         // *Busqueda General. -> find
         await rl.question('Opcion 1: Buscar a todos los Vetulios. Opcion 2: Buscar todos los datos -> ', (option) => {
-
             BusquedaGeneral(client, option)
             rl.close();
         });
@@ -42,20 +43,27 @@ const main = async () => {
         //     BusquedaEspesifica(client, option)
         //     rl.close();
         // });
-        //*  Crear Propiedad con validacion:
-        // await crearPropiedadesConValidacion(client);
+
         // * insertar -> One
         // await InsertarDatosOne(client, datosArray);
         //* Insertar con many
         // await InsertarDatosMany(client, FakerDatos);
+
+        // *Update One con y sin upsert
+        // await UpdateOneSinUpsert(client)
+        // await UpdateOneConUpsert(client)
+        //*Update Many con y sin upsert
+        // await UpdateManySinUpsert(client)
+        // await UpdateManyConUpsert(client)
+
         //* borrarAleatorios -> One
         // await BorrarElemntosAleatorios(client)
-        //* BorrarUnElemento -> One
-        // await BorrarElemntosUnElemento(client, "Vetulio")
 
-        // await FindOneDeDatos(client, "Amos Quitzon")
-    } catch (error) {
-        console.log(error);
+        //* BorrarUnElemento -> One
+        // await DeleteOne(client, "Vetulio")
+        //* BorrarVariosElementos -> Many
+        // await DeleteMany(client, "Vetulio")
+        //*Finally
     } finally {
         await client.close();
     }
@@ -142,7 +150,71 @@ const InsertarDatosMany = async (client, arregloPropiedades) => {
     console.log(result.insertedIds);
 };
 
-// * Borrando datos -> One
+// * Actualizar dato -> One sin upsert
+const UpdateOneSinUpsert = async (client) => {
+    const result = await client.db("Rcservice").collection("empleados").updateOne(
+        { nombres: "Vetulio" },
+        { $set: { contrasena: "123123123" } }
+    );
+    console.log(`se actualizaron ${result.matchedCount} propiedades`);
+}
+
+// * Actualizar dato -> One con upsert
+const UpdateOneConUpsert = async (client) => {
+    // ! upsert
+    const upsert = { upsert: true }
+    const result = await client.db("Rcservice").collection("empleados").updateOne(
+        { nombres: "Vetulio" },
+        { $set: { contrasena: "5555555" } },
+        upsert
+    );
+    console.log(`se actualizaron ${result.matchedCount} propiedades`);
+}
+// *Actulaizar dato -> One sin upsert
+const UpdateManySinUpsert = async (client) => {
+    const result = await client.db("Rcservice").collection("empleados").updateMany(
+        { nombres: "Vetulio" },
+        { $set: { contrasena: "123123123" } }
+    );
+    console.log(`se actualizaron ${result.matchedCount} propiedades`);
+}
+
+// *Actulaizar dato -> One Con upsert
+const UpdateManyConUpsert = async (client) => {
+    // ! upsert
+    const upsert = { upsert: true }
+    const result = await client.db("Rcservice").collection("empleados").updateMany(
+        { nombres: "Vetulio" },
+        { $set: { contrasena: "5555555" } },
+        upsert
+    );
+    console.log(`se actualizaron ${result.matchedCount} propiedades`);
+}
+
+
+// * Eliminar dato -> ONE
+const DeleteOne = async (client, nombrePropiedad) => {
+    const dato = await client.db("Rcservice").collection("empleados").deleteOne
+        ({ nombres: nombrePropiedad })
+    if (dato) {
+        console.log("El dato se elimino correctamente")
+    } else {
+        console.log("La propiedad que desea eliminar no existe")
+    }
+}
+// * Eliminar dato -> Many
+const DeleteMany = async (client, nombrePropiedad) => {
+    const dato = await client.db("Rcservice").collection("empleados").deleteMany
+        ({ nombres: nombrePropiedad })
+    if (dato) {
+        console.log("El dato se elimino correctamente")
+    } else {
+        console.log("La propiedad que desea eliminar no existe")
+    }
+}
+// todo: <------varios--------> 
+
+// * Borrando numero x de elementos -> One
 const BorrarElemntosAleatorios = async (client) => {
 
     const collection = await client.db("Rcservice").collection("empleados")
@@ -156,26 +228,5 @@ const BorrarElemntosAleatorios = async (client) => {
     }
     console.log(`Se han eliminado ${result.length} documentos`);
 
-
-}
-
-
-
-
-// * Eliminar dato -> ONE
-async function BorrarElemntosUnElemento(client, nombrePropiedad) {
-    const dato = await client.db("Rcservice").collection("empleados").deleteOne
-        ({ nombres: nombrePropiedad })
-    if (dato) {
-        console.log("El dato se elimino correctamente")
-    } else {
-        console.log("La propiedad que desea eliminar no existe")
-    }
-}
-
-// * Actualizar dato -> Many
-async function actualizarPropiedades(client) {
-    const result = await client.db("RCservice").collection("Servicios").updateMany({ property_type: { $exists: false } }, { $set: { property_type: "Sin definir" } });
-    console.log(`se actualizaron ${result.matchedCount} propiedades`);
 
 }
