@@ -19,7 +19,7 @@ const FakerFuntion = () => {
         lol(arreglo);
     }
 
-    console.log(arrayN);
+    // console.log(arrayN);
     return arrayN;
 };
 

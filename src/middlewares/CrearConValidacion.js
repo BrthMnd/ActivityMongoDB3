@@ -40,8 +40,8 @@ const crearPropiedadesConValidacion = async (client, arregloPropiedades) => {
         }
 
     });
-    console.log(`Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`)
-    console.log(result.insertedIds)
+    // console.log(`Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`)
+    console.log("creado con exito")
 }
 
 module.exports = crearPropiedadesConValidacion
