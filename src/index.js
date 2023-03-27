@@ -269,7 +269,6 @@ const LooksUp = async (client) => {
 
 }
 // todo: <------Extra--------> 
-const 
 // * Borrando numero x de elementos -> One
 const BorrarElemntosAleatorios = async (client) => {
 
