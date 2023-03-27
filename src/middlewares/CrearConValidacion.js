@@ -1,12 +1,12 @@
 
-const crearPropiedadesConValidacion = async (client, arregloPropiedades) => {
-    const result = await client.db("Rcservice").createCollection("proveedores_servicio", {
+const crearPropiedadesConValidacion = async (client) => {
+    const result = await client.db("Rcservice").createCollection("cliente", {
         validator: {
 
             $jsonSchema: {
                 bsonType: "object",
                 // required: ["identificacion", "nombres","apellidos","email","telefono","servicio","contrasena"],
-                required: ["direccion", "nombres", "apellidos", "telefono", "email", "servicio", "contrasena"],
+                required: ["direccion", "nombres", "apellidos", "telefono", "email", "contrasena"],
                 //* direccion -- nombres -- apellidos -- telefono -- email -- contraseña
                 //* identificacion -- nombres -- apellidos -- telefono -- email --Servicio(s) --contraseña
                 properties: {

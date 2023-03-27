@@ -31,12 +31,12 @@ const main = async () => {
         await client.connect();
 
         //*  Crear Propiedad con validacion:
-        // await crearPropiedadesConValidacion(client);
+        // await CrearValidacion(client);
         // *Busqueda General. -> find
-        await rl.question('Opcion 1: Buscar a todos los Vetulios. Opcion 2: Buscar todos los datos -> ', (option) => {
-            BusquedaGeneral(client, option)
-            rl.close();
-        });
+        // await rl.question('Opcion 1: Buscar a todos los Vetulios. Opcion 2: Buscar todos los datos -> ', (option) => {
+        //     BusquedaGeneral(client, option)
+        //     rl.close();
+        // });
         // * Busqueda especifica -> findOne
         // await rl.question('Ingrese Nombre de la base de datos -> ', (option) => {
 
@@ -63,6 +63,13 @@ const main = async () => {
         // await DeleteOne(client, "Vetulio")
         //* BorrarVariosElementos -> Many
         // await DeleteMany(client, "Vetulio")
+
+        //*  Borrar Collection
+        // await borrarCollection(client)
+        //* Borrar Databases
+        // await borrarDatabases(client)
+        //* Looks up -> 1
+        await LooksUp(client)
         //*Finally
     } finally {
         await client.close();
@@ -107,7 +114,7 @@ const BusquedaGeneral = async (client, option) => {
             const result = await client
                 .db("Rcservice")
                 .collection("empleados")
-                .find({}).toArray();
+                .find({}).limit(10).toArray(); // Quitar limit 10
             console.log(result)
 
         } else {
@@ -142,7 +149,7 @@ const InsertarDatosMany = async (client, arregloPropiedades) => {
     // * InsertMany
     const result = await client
         .db("Rcservice")
-        .collection("empleados")
+        .collection("cliente")
         .insertMany(arregloPropiedades);
     console.log(
         `Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`
@@ -212,8 +219,57 @@ const DeleteMany = async (client, nombrePropiedad) => {
         console.log("La propiedad que desea eliminar no existe")
     }
 }
-// todo: <------varios--------> 
 
+//* borrar Collection Drop - drop collection
+const borrarCollection = async (client) => {
+    const result = await client.db("Rcservice").collection("proveedores_servicio").drop()
+    if (result) {
+        console.log("Se ha borrado la colección")
+    } else {
+        console.log("No se ha borrado la colección")
+    }
+}
+//* Borrar Databases -> nota: no me deja ya que dice que necesito permisos
+const borrarDatabases = async (client) => {
+    const result = await client.db("Hospital").dropDatabase()
+    if (result) {
+        console.log("Se ha borrado la base de datos")
+    } else {
+        console.log("No se ha borrado la base de datos")
+    }
+}
+//* Look ups 
+const LooksUp = async (client) => {
+    await client.connect();
+    const collection1 = await client.db("Rcservice").collection("empleados")
+    // const collection2 = await client.db("Rcservice").collection("proveedores_servicio")
+    // const collection3 = await client.db("Rcservice").collection("cliente")
+    collection1.aggregate([
+        {
+            $lookup: {
+                from: client.db("Rcservice").collection('proveedores_servicio'),
+                localField: 'id',
+                foreignField: 'id',
+                as: 'join1'
+            }
+        },
+        {
+            $lookup: {
+                from: client.db("Rcservice").collection('cliente'),
+                localField: 'id',
+                foreignField: 'id',
+                as: 'join2'
+            }
+        }
+    ], (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        client.close()
+    });
+
+}
+// todo: <------Extra--------> 
+const 
 // * Borrando numero x de elementos -> One
 const BorrarElemntosAleatorios = async (client) => {
 
