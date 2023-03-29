@@ -20,28 +20,29 @@ const main = async () => {
 
     // *** DatosArray para no tener que repetir codigo ***
     // ! para servicio
-    // let datosArray = {
-    //     "tipo": 'Camaras de seguridad',
-    //     "estado": true,
-    //     "clase": 'lksj2',
-    //     "grupo": 'asd',
-    //     "numero": 1234567891
-    // }
-    // ! para proveedor y cliente
     let datosArray = {
-        "direccion": 'Carrera 24 A-50',
-        "nombres": 'Dufelsmit',
-        "apellidos": 'Alcaheda',
-        "telefono": '300 476 2696',
-        "email": 'elgranvetulio8@hotmail.com',
-        "contrasena": 'contrasena123',
-        "tipo_servicio": "Albanil",
+        "tipo": 'Camaras de seguridad',
+        "estado": true,
+        "clase": 'lksj2',
+        "grupo": 'asd',
+        "numero": 1234567891,
         "trabajos": {
             "trabajo1": true,
             "trabajo2": true,
             "trabajo3": true,
         }
     }
+    // ! para proveedor y cliente
+    // let datosArray = {
+    //     "direccion": 'Carrera 24 A-50',
+    //     "nombres": 'Dufelsmit',
+    //     "apellidos": 'Alcaheda',
+    //     "telefono": '300 476 2696',
+    //     "email": 'elgranvetulio8@hotmail.com',
+    //     "contrasena": 'contrasena123',
+    //     "tipo_servicio": "Albanil",
+
+    // }
     try {
         await client.connect();
 
@@ -153,7 +154,7 @@ const BusquedaGeneral = async (client, option) => {
 const InsertarDatosOne = async (client, Datos) => {
     const result = await client
         .db("Rcservice")
-        .collection("proveedores_servicio")
+        .collection("servicio")
         .insertOne(Datos);
     console.log(
         `Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`
