@@ -4,7 +4,7 @@
 - Puede correr el programa con "npm start" para que no tenga que estar escribiendo node src/index.js
 - Para descargar las dependencias ya que no subimos la carpeta "node_modules" se utiliza npm install/npm i
 - se utilizó readLine para que pudiera digitar la opcion que necesite en la consola de comandos
-- se utilizaron las tres colecciones para poder sacar el maximo provecho a todas las actividades
+- se utilizaron las tres colecciones para poder sacar el maximo provecho a todos los ejercicios
 
 _Nota: Muchas gracias por la atencion._
 
