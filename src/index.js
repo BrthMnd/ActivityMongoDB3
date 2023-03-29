@@ -19,13 +19,23 @@ const main = async () => {
     const client = new MongoClient(uri);
 
     // *** DatosArray para no tener que repetir codigo ***
+    // ! para servicio
+    // let datosArray = {
+    //     "tipo": 'Carpintería',
+    //     "estado": true,
+    //     "clase": 'lksj2',
+    //     "grupo": 'asd',
+    //     "numero": 1234567891
+    // }
+    // ! para proveedor y cliente
     let datosArray = {
         "direccion": 'Carrera 24 A-50',
         "nombres": 'Vetulio',
         "apellidos": 'Alcaheda',
         "telefono": '300 476 2696',
         "email": 'elgranvetulio8@hotmail.com',
-        "contrasena": 'contrasena123'
+        "contrasena": 'contrasena123',
+        "tipo_servicio": "Carpintería"
     }
     try {
         await client.connect();
@@ -45,7 +55,7 @@ const main = async () => {
         // });
 
         // * insertar -> One
-        // await InsertarDatosOne(client, datosArray);
+        await InsertarDatosOne(client, datosArray);
         //* Insertar con many
         // await InsertarDatosMany(client, FakerDatos);
 
@@ -68,8 +78,9 @@ const main = async () => {
         // await borrarCollection(client)
         //* Borrar Databases
         // await borrarDatabases(client)
+
         //* Looks up -> 1
-        await LooksUp(client)
+        // await LooksUp(client)
         //*Finally
     } finally {
         await client.close();
@@ -137,7 +148,7 @@ const BusquedaGeneral = async (client, option) => {
 const InsertarDatosOne = async (client, Datos) => {
     const result = await client
         .db("Rcservice")
-        .collection("empleados")
+        .collection("proveedores_servicio")
         .insertOne(Datos);
     console.log(
         `Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`
@@ -149,7 +160,7 @@ const InsertarDatosMany = async (client, arregloPropiedades) => {
     // * InsertMany
     const result = await client
         .db("Rcservice")
-        .collection("cliente")
+        .collection("proveedores_servicio")
         .insertMany(arregloPropiedades);
     console.log(
         `Se crearon ${result.insertedCount} nuevas propiedades con los siguientes id(s):`
@@ -211,7 +222,7 @@ const DeleteOne = async (client, nombrePropiedad) => {
 }
 // * Eliminar dato -> Many
 const DeleteMany = async (client, nombrePropiedad) => {
-    const dato = await client.db("Rcservice").collection("empleados").deleteMany
+    const dato = await client.db("Rcservice").collection("proveedor_servicio").deleteMany
         ({ nombres: nombrePropiedad })
     if (dato) {
         console.log("El dato se elimino correctamente")
@@ -222,7 +233,7 @@ const DeleteMany = async (client, nombrePropiedad) => {
 
 //* borrar Collection Drop - drop collection
 const borrarCollection = async (client) => {
-    const result = await client.db("Rcservice").collection("proveedores_servicio").drop()
+    const result = await client.db("Rcservice").collection("servicio").drop()
     if (result) {
         console.log("Se ha borrado la colección")
     } else {
@@ -239,28 +250,20 @@ const borrarDatabases = async (client) => {
     }
 }
 //* Look ups 
-const LooksUp = async (client) => {
+const LookssUp = async (client) => {
     await client.connect();
-    const collection1 = await client.db("Rcservice").collection("empleados")
-    // const collection2 = await client.db("Rcservice").collection("proveedores_servicio")
-    // const collection3 = await client.db("Rcservice").collection("cliente")
+    const collection1 = await client.db("Rcservice").collection("proveedor_servicio")
+    const collection2 = await client.db("Rcservice").collection("servicio")
     collection1.aggregate([
         {
             $lookup: {
-                from: client.db("Rcservice").collection('proveedores_servicio'),
-                localField: 'id',
-                foreignField: 'id',
+                from: collection2,
+                localField: 'tipo',
+                foreignField: 'tipo_servicio',
                 as: 'join1'
             }
-        },
-        {
-            $lookup: {
-                from: client.db("Rcservice").collection('cliente'),
-                localField: 'id',
-                foreignField: 'id',
-                as: 'join2'
-            }
         }
+
     ], (err, result) => {
         if (err) throw err;
         console.log(result);
@@ -268,12 +271,43 @@ const LooksUp = async (client) => {
     });
 
 }
+async function LooksUp(client) {
+    try {
+        await client.connect();
+        const database = client.db('Rcservice');
+        const collection = database.collection('proveedor_servicio');
+
+        const pipeline = [
+            {
+                $lookup: {
+                    from: 'servicio',
+                    localField: 'tipo_servicio',
+                    foreignField: 'tipo',
+                    as: 'Servicio'
+                }
+            }
+        ];
+
+        const results = await collection.aggregate(pipeline).toArray();
+        console.log("1")
+
+        results.forEach(element => {
+            console.log(element.Servicio)
+
+        });
+    } finally {
+        await client.close();
+    }
+}
+const Pipelines = async (client) => {
+
+}
 // todo: <------Extra--------> 
 // * Borrando numero x de elementos -> One
 const BorrarElemntosAleatorios = async (client) => {
 
-    const collection = await client.db("Rcservice").collection("empleados")
-    const result = await collection.aggregate([{ $sample: { size: 100 } }]).toArray();
+    const collection = await client.db("Rcservice").collection("proveedor_servicio")
+    const result = await collection.aggregate([{ $sample: { size: 10 } }]).toArray();
     let i = 1
 
     for (let documento of result) {
