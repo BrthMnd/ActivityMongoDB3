@@ -35,7 +35,12 @@ const main = async () => {
         "telefono": '300 476 2696',
         "email": 'elgranvetulio8@hotmail.com',
         "contrasena": 'contrasena123',
-        "tipo_servicio": "Albanil"
+        "tipo_servicio": "Albanil",
+        "trabajos": {
+            "trabajo1": true,
+            "trabajo2": true,
+            "trabajo3": true,
+        }
     }
     try {
         await client.connect();
@@ -55,7 +60,7 @@ const main = async () => {
         // });
 
         // * insertar -> One
-        // await InsertarDatosOne(client, datosArray);
+        await InsertarDatosOne(client, datosArray);
         //* Insertar con many
         // await InsertarDatosMany(client, FakerDatos);
 
@@ -80,7 +85,7 @@ const main = async () => {
         // await borrarDatabases(client)
 
         //* Looks up -> 1
-        await LooksUp(client)
+        // await LooksUp(client)
         //*Finally
     } finally {
         await client.close();
