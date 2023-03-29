@@ -21,7 +21,7 @@ const main = async () => {
     // *** DatosArray para no tener que repetir codigo ***
     // ! para servicio
     // let datosArray = {
-    //     "tipo": 'Carpintería',
+    //     "tipo": 'Camaras de seguridad',
     //     "estado": true,
     //     "clase": 'lksj2',
     //     "grupo": 'asd',
@@ -30,12 +30,12 @@ const main = async () => {
     // ! para proveedor y cliente
     let datosArray = {
         "direccion": 'Carrera 24 A-50',
-        "nombres": 'Vetulio',
+        "nombres": 'Dufelsmit',
         "apellidos": 'Alcaheda',
         "telefono": '300 476 2696',
         "email": 'elgranvetulio8@hotmail.com',
         "contrasena": 'contrasena123',
-        "tipo_servicio": "Carpintería"
+        "tipo_servicio": "Albanil"
     }
     try {
         await client.connect();
@@ -48,14 +48,14 @@ const main = async () => {
         //     rl.close();
         // });
         // * Busqueda especifica -> findOne
-        // await rl.question('Ingrese Nombre de la base de datos -> ', (option) => {
+        // await rl.question('Ingrese Nombre -> ', (option) => {
 
         //     BusquedaEspesifica(client, option)
         //     rl.close();
         // });
 
         // * insertar -> One
-        await InsertarDatosOne(client, datosArray);
+        // await InsertarDatosOne(client, datosArray);
         //* Insertar con many
         // await InsertarDatosMany(client, FakerDatos);
 
@@ -72,7 +72,7 @@ const main = async () => {
         //* BorrarUnElemento -> One
         // await DeleteOne(client, "Vetulio")
         //* BorrarVariosElementos -> Many
-        // await DeleteMany(client, "Vetulio")
+        // await DeleteMany(client, "electricista")
 
         //*  Borrar Collection
         // await borrarCollection(client)
@@ -80,7 +80,7 @@ const main = async () => {
         // await borrarDatabases(client)
 
         //* Looks up -> 1
-        // await LooksUp(client)
+        await LooksUp(client)
         //*Finally
     } finally {
         await client.close();
@@ -120,7 +120,7 @@ const BusquedaGeneral = async (client, option) => {
                 .collection("empleados")
                 .find({ nombres: "Vetulio" }).toArray();
             console.log(result)
-            console.log("vetulios encontrados:" + result.length)
+            console.log("encontrados:" + result.length)
         } else if (option == 2) {
             const result = await client
                 .db("Rcservice")
@@ -212,8 +212,8 @@ const UpdateManyConUpsert = async (client) => {
 
 // * Eliminar dato -> ONE
 const DeleteOne = async (client, nombrePropiedad) => {
-    const dato = await client.db("Rcservice").collection("empleados").deleteOne
-        ({ nombres: nombrePropiedad })
+    const dato = await client.db("Rcservice").collection("servicios").deleteOne
+        ({ tipo: "Albanil" })
     if (dato) {
         console.log("El dato se elimino correctamente")
     } else {
@@ -222,8 +222,8 @@ const DeleteOne = async (client, nombrePropiedad) => {
 }
 // * Eliminar dato -> Many
 const DeleteMany = async (client, nombrePropiedad) => {
-    const dato = await client.db("Rcservice").collection("proveedor_servicio").deleteMany
-        ({ nombres: nombrePropiedad })
+    const dato = await client.db("Rcservice").collection("proveedores_servicio").deleteMany
+        ({ tipo_servicio: nombrePropiedad })
     if (dato) {
         console.log("El dato se elimino correctamente")
     } else {
@@ -250,32 +250,12 @@ const borrarDatabases = async (client) => {
     }
 }
 //* Look ups 
-const LookssUp = async (client) => {
-    await client.connect();
-    const collection1 = await client.db("Rcservice").collection("proveedor_servicio")
-    const collection2 = await client.db("Rcservice").collection("servicio")
-    collection1.aggregate([
-        {
-            $lookup: {
-                from: collection2,
-                localField: 'tipo',
-                foreignField: 'tipo_servicio',
-                as: 'join1'
-            }
-        }
 
-    ], (err, result) => {
-        if (err) throw err;
-        console.log(result);
-        client.close()
-    });
-
-}
-async function LooksUp(client) {
+const LooksUp = async (client) => {
     try {
         await client.connect();
         const database = client.db('Rcservice');
-        const collection = database.collection('proveedor_servicio');
+        const collection = database.collection('proveedores_servicio');
 
         const pipeline = [
             {
@@ -289,12 +269,12 @@ async function LooksUp(client) {
         ];
 
         const results = await collection.aggregate(pipeline).toArray();
-        console.log("1")
 
-        results.forEach(element => {
-            console.log(element.Servicio)
-
-        });
+        for (let i = 0; i < results.length; i++) {
+            if (results[i].Servicio != "") {
+                console.log(results[i])
+            }
+        }
     } finally {
         await client.close();
     }

@@ -1,6 +1,14 @@
-## Profe
+## Notas para el Profe
 
-## Actividad:
+- Para leer los comentarios de la mejor manera posible puede descargarse el plugins/extensions "Better Comments"
+- Puede correr el programa con "npm start" para que no tenga que estar escribiendo node src/index.js
+- Para descargar las dependencias ya que no subimos la carpeta "node_modules" se utiliza npm install/npm i
+- se utilizó readLine para que pudiera digitar la opcion que necesite en la consola de comandos
+- se utilizaron las tres colecciones para poder sacar el maximo provecho a todas las actividades
+
+_Nota: Muchas gracias por la atencion._
+
+### Actividad:
 
 -Creación Base de Datos CRUD Node.js MongoDB
 Usando las operaciones de create database y create collection, cree una base de datos que contenga al menos tres colecciones. Cada colección debe contar al menos con 100 documentos y 5 campos.
