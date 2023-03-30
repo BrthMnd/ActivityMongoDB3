@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb')
 const FakerFuntion = require("./middlewares/faker");
 const CrearValidacion = require("./middlewares/CrearConValidacion");
 const readline = require('readline');
+const { pipeline } = require('stream');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -88,6 +89,10 @@ const main = async () => {
         //* Looks up -> 1
         // await LooksUp(client)
         //*Finally
+        //* Pipelines -> Sort, Unwind, Limit 
+        // await Pipelines(client)
+
+        // !fin
     } finally {
         await client.close();
     }
@@ -287,6 +292,19 @@ const LooksUp = async (client) => {
 }
 const Pipelines = async (client) => {
 
+    try {
+        await client.connect();
+        const servicio = await client.db("Rcservice").collection("servicio");
+        await servicio.aggregate([
+            { $sort: { "numero": -1 } },
+            { $limit: 10 },
+            { $unwind: "$trabajo1" }
+        ]).toArray()
+        console.log("Agregao menol")
+
+    } finally {
+        await client.close();
+    }
 }
 // todo: <------Extra--------> 
 // * Borrando numero x de elementos -> One
