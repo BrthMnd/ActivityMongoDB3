@@ -8,6 +8,8 @@
 
 _Nota: Muchas gracias por la atencion._
 
+Integrantes del trabajo: Brandon Quintero, Dufainer Esquivel, Cristian Pardo, Jeni Bejarano, Santiago Hoyos.
+
 ### Actividad:
 
 -Creación Base de Datos CRUD Node.js MongoDB
